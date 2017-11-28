@@ -51,6 +51,12 @@ function gameState(dt) {
         if (introTimer <= 0) {
             introTimer = 0;
             intro_render = false;
+            
+            if (waitTimer) {
+                temp = waitTimer;
+                waitTimer = undefined;
+                temp();
+            }
         }
     }
 
@@ -140,9 +146,12 @@ function getMapTile(layer, x, y) {
     
     // Hijacked special effect
     if (intro_render) {      
-        var tt22 = ScreenToTile(
-            entityBatch[0].ppx + stage_x, 
-            entityBatch[0].ppy + stage_y);
+    
+        var height = 0;
+        var width = 32;
+        var ctx = entityBatch[0].ppx + stage_x + 0.5 * (TILE_WIDTH - width);
+        var cty = entityBatch[0].ppy + stage_y - height + TILE_DEPTH;
+        var tt22 = ScreenToTile(ctx, cty);
         
         var dx = (x - tt22.x);
         var dy = (y - tt22.y);
@@ -191,14 +200,40 @@ function drawEntities() {
     for (var i = 0; i < entityBatch.length; ++i) {
         var entity = entityBatch[i];//[frame%4];
         
-        var tile = entity.img;
-        width = tile.width;
-        height = tile.height;
+        //var tile = entity.img;
+        var tile = getEntityTile();
         
-        x = entity.ppx + stage_x + 0.5 * (TILE_WIDTH - width) - 3 + 40;
-        y = entity.ppy + stage_y - height + TILE_DEPTH - 7 + 40;
+        width = 32;
+        height = 32;
+        
+        x = entity.ppx + stage_x + 0.5 * (TILE_WIDTH - width);
+        y = entity.ppy + stage_y - height + TILE_DEPTH;
 
-        ctx.drawImage(tile, x, y);
+        var sx = 32 * (frame % 4);
+
+
+
+        if (dude.flip) {
+        ctx.save();
+            ctx.translate(width, 0);
+            ctx.scale(-1, 1);
+
+
+
+        ctx.drawImage(tile, 
+                      sx, 0,
+                      32, 32,
+                      -x, y, 
+                      32, 32);
+                      
+        ctx.restore();
+        } else {
+                ctx.drawImage(tile, 
+                      sx, 0,
+                      32, 32,
+                      x, y, 
+                      32, 32);
+        }
     }
     
     // Pathing
@@ -207,4 +242,31 @@ function drawEntities() {
     // Console
     var tt = ScreenToTile(currX, currY);
     ctx.fillText(tt.x + ', ' + tt.y, 25, 25);
+}
+
+var img = {};
+img.person = new Image();
+img.person.src = 'img/stand0x.png';
+img.cat_idle = new Image();
+img.cat_idle.src = 'img/cat_idle.png';
+img.cat_run = new Image();
+img.cat_run.src = 'img/cat_walk.png';
+function getEntityTile() {
+
+    //1st part
+    //return img.person;
+
+
+    // Transition / Hijack
+    if (intro_render) {
+        if (Math.floor(introTimer/15) % 2) {
+            return img.person;
+        } else {
+            return img.cat_idle;
+        }
+    } 
+    
+    if (dude.run) return img.cat_run;
+    return img.cat_idle;
+
 }

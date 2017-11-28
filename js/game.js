@@ -6,8 +6,8 @@ var tiles = {};
 
 var selected = [];
 var dude = {};
-dude.img = new Image();
-dude.img.src = 'img/stand0x.png';
+//dude.img = new Image();
+//dude.img.src = 'img/stand0x.png';
 dude.ppx = 384;
 dude.ppy = 795;
 
@@ -126,6 +126,8 @@ canvas.addEventListener("mouseout", function (e) {
             findxy('out', e)
         }, false);
 function findxy(res, e) {
+        if (waitEnter) return;
+
         if (res == 'down') {
         
             if (e.button == 0 ||  e.button == 2) {
@@ -173,10 +175,10 @@ function updateMovePath()
         
         ds = {x:0,y:0};
         
-        if (x < control.x - 1) ds.x = 1;
-        if (x > control.x) ds.x = -1;
-        if (y < control.y) ds.y = 1;
-        if (y > control.y) ds.y = -1;
+        if (x < control.x - 2) ds.x = 1;
+        if (x > control.x + 1) ds.x = -1;
+        if (y < control.y - 1) ds.y = 1;
+        if (y > control.y + 1) ds.y = -1;
         //console.log(control.x);        
         //console.log(control.y);
         var newx = x + 2 * ds.x;
@@ -229,6 +231,13 @@ function updateMovePath()
         ctx.closePath();
         ctx.stroke();
            */
+           
+        // Some animation stuff
+        if (newx > x) dude.flip = false;
+        if (newx < x) dude.flip = true;
+        
+        if (newx != x || newy !=y) dude.run = true;
+        else dude.run = false;
     
     }
 }

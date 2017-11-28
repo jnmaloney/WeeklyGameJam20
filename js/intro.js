@@ -4,7 +4,7 @@ var introTimer = 0;
 
 // Show title screen
 function showTitleScreen() {
-    waitEnter = beginTitle2;
+    waitEnter = beginIntroSeq;
     scene.draw = drawTitle;
 }
 
@@ -26,13 +26,6 @@ function gameStart() {
 }
 
 
-// Call the first function
-function onLoadComplete_startIntro() {
-    showTitleScreen();
-    loop();
-}
-
-
 var title1 = new Image();
 title1.src = 'img/Title.png';
 
@@ -51,11 +44,23 @@ function beginTitle2() {
     waitEnter = beginGame;
 }
 
+var waitTimer;
 function beginIntroSeq() {
     scene.draw = gameDraw;
     // delay
     introTimer = 200;
+    
+    waitTimer = beginTitle2;
 }
+
+
+// Call the first function
+function onLoadComplete_startIntro() {
+    showTitleScreen();
+    loop();
+}
+
+
 
 // Drawers
 function drawTitle() {

@@ -161,7 +161,7 @@ function onLoad1( data ) {
        //loader.setMimeType('audio/wav');
        loader.setResponseType('arraybuffer');         
        loader.load(
-                    'bank/11-25-17 GameJamMusicTest.mp3',
+                    'bank/MeowTheme.mp3',
                     onLoad2,
                     onProgress,
                     onFail
