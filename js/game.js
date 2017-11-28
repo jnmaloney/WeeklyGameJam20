@@ -8,10 +8,18 @@ var selected = [];
 var dude = {};
 //dude.img = new Image();
 //dude.img.src = 'img/stand0x.png';
-dude.ppx = 384;
-dude.ppy = 795;
+dude.ppx = 284;
+dude.ppy = 1205;
+dude.cat = false;
 
-var stage_x = 580, stage_y = -400;
+var watcher = {};
+watcher.ppx = 130;
+watcher.ppy = 1030;
+watcher.character = 1;
+watcher.cat = 1;
+
+
+var stage_x = 0, stage_y = 0;
 
 
 var entityBatch = [];
@@ -131,10 +139,16 @@ function findxy(res, e) {
         if (res == 'down') {
         
             if (e.button == 0 ||  e.button == 2) {
-                control.x = currX - stage_x - 60;
-                control.y = currY - stage_y - 60;
+                if (!dude.a3) {
+                    control.x = currX - stage_x;
+                    control.y = currY - stage_y;
+                }
                 
                 playSound(mouseClickSound);
+                
+                if (dude.cat && e.button == 2 && !dude.a3) {
+                    dude.a3 = true;
+                }
             }
         }
         if (res == 'up' || res == "out") {
@@ -169,6 +183,10 @@ function updateMovePath()
 {
     //var ss = TileToScreen(tt.x, tt.y, 0, 0);
     
+    var d = 0;
+    if (dude.cat) d = 2;
+    cells = map.layers[d].data;
+    
     for (var i = 0; i < selected.length; ++i) {
         var x = selected[i].ppx;
         var y = selected[i].ppy;
@@ -181,13 +199,19 @@ function updateMovePath()
         if (y > control.y + 1) ds.y = -1;
         //console.log(control.x);        
         //console.log(control.y);
+        
+        if (dude.a3) {
+            ds.x *= 1;            
+            ds.y *= 1;
+        }
+        
         var newx = x + 2 * ds.x;
         var newy = y + ds.y;
         
         var width = 48, height = 48;
         var tt = ScreenToTile(
-                            newx + stage_x + 0.5 * (TILE_WIDTH - width) - 3 + 40 + 0.5*width, 
-                            newy + stage_y - height + TILE_DEPTH - 7 + 40 + height
+                            newx + stage_x + 0.5 * (TILE_WIDTH - width) + 0.5*width, 
+                            newy + stage_y - height + TILE_DEPTH + height
                         );
         //if (tt.x < -1) { newx = x; newy = y; }
         //if (tt.x > 8) { newx = x; newy = y; }
@@ -238,6 +262,10 @@ function updateMovePath()
         
         if (newx != x || newy !=y) dude.run = true;
         else dude.run = false;
+        
+        if (dude.a3) {
+            if (dude.run == false) dude.a3 = false;
+        }
     
     }
 }

@@ -60,6 +60,16 @@ function gameState(dt) {
         }
     }
 
+    // player start
+    if (!dude.cat) {
+        var dx = dude.ppx - watcher.ppx;
+        var dy = dude.ppy - watcher.ppy;
+        if (dx*dx + dy*dy < 100) {
+            middleIntroSeq();
+            dude.cat = true; 
+        } 
+    }
+
 }
 
 function gameDraw() {
@@ -69,9 +79,8 @@ function gameDraw() {
     ctx.scale(2, 2);
         
     drawLayer(0);
-    drawLayer(1);
     drawEntities();
-    drawLayer(2);
+    drawLayer(1);
     
     /*if (waitingOnBank && gBank) {
     
@@ -115,9 +124,7 @@ function drawLayer(layer) {
             var ry = 2 + 2*10;
 
             // ?
-            tt = ScreenToTile(x, y);
-
-            
+            tt = ScreenToTile(x, y);            
             	        
 	        var tile = getMapTile(layer, tt.x, tt.y);      
 	        
@@ -145,12 +152,12 @@ function getMapTile(layer, x, y) {
     if (tt.y > 99) return undefined; 
     
     // Hijacked special effect
-    if (intro_render) {      
+    /*if (intro_render)*/ {      
     
         var height = 0;
         var width = 32;
-        var ctx = entityBatch[0].ppx + stage_x + 0.5 * (TILE_WIDTH - width);
-        var cty = entityBatch[0].ppy + stage_y - height + TILE_DEPTH;
+        var ctx = entityBatch[1].ppx + stage_x + 0.5 * (TILE_WIDTH - width);
+        var cty = entityBatch[1].ppy + stage_y - height + TILE_DEPTH;
         var tt22 = ScreenToTile(ctx, cty);
         
         var dx = (x - tt22.x);
@@ -161,7 +168,22 @@ function getMapTile(layer, x, y) {
             if (layer > 0) return undefined;
             return tiles[9];
         }
+        
+        // Split?
+        if (r2 < n1) {        
+            cells = map.layers[layer + 2].data;
+            var t = tcell(tt.x, tt.y);
+             
+            if (t == undefined) return undefined;
+            if (t == 0) return undefined;
+
+	        return tiles[t-1];
+        }
     }
+    
+
+    cells = map.layers[layer].data;
+    
     
     // Ordinary stage tile
     if (stage_render) {
@@ -201,7 +223,7 @@ function drawEntities() {
         var entity = entityBatch[i];//[frame%4];
         
         //var tile = entity.img;
-        var tile = getEntityTile();
+        var tile = getEntityTile(entity);
         
         width = 32;
         height = 32;
@@ -247,26 +269,52 @@ function drawEntities() {
 var img = {};
 img.person = new Image();
 img.person.src = 'img/stand0x.png';
+img.human_run = new Image();
+img.human_run.src = 'img/run_human.png';
 img.cat_idle = new Image();
 img.cat_idle.src = 'img/cat_idle.png';
 img.cat_run = new Image();
 img.cat_run.src = 'img/cat_walk.png';
-function getEntityTile() {
+img.cat_a3 = new Image();
+img.cat_a3.src = 'img/cat_a3.png';
+img.watcher_idle = new Image();
+img.watcher_idle.src = 'img/Cat civilian.png';
+img.watcher_run = new Image();
+img.watcher_run.src = 'img/Cat civilian.png';
+function getEntityTile(entity) {
 
     //1st part
     //return img.person;
 
 
     // Transition / Hijack
-    if (intro_render) {
+    /*if (intro_render) {
         if (Math.floor(introTimer/15) % 2) {
             return img.person;
         } else {
             return img.cat_idle;
         }
-    } 
+    } */
     
-    if (dude.run) return img.cat_run;
-    return img.cat_idle;
+    // entity
+    if (entity.character == 1) {
+        if (entity.cat) {
+            if (entity.run) return img.watcher_run;
+            return img.watcher_idle;
+        } else {
+            if (entity.run) return img.human_run;
+            return img.person;
+        }
+    }
+    
+    // player
+    if (dude.cat) {
+        if (dude.a3) return img.cat_a3;
+        if (dude.run) return img.cat_run;
+        return img.cat_idle;
+    } else {
+        if (dude.run) return img.human_run;
+        return img.person;
+    }
 
 }

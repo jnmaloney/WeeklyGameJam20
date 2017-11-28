@@ -47,10 +47,16 @@ function beginTitle2() {
 var waitTimer;
 function beginIntroSeq() {
     scene.draw = gameDraw;
+    entityBatch.push(watcher);
+}
+
+function middleIntroSeq() {
     // delay
     introTimer = 200;
     
     waitTimer = beginTitle2;
+    
+
 }
 
 
