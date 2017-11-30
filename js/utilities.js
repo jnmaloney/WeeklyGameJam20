@@ -98,3 +98,5 @@ function ScreenToTile(mX, mY)
 // ---------------------------------------------------------------------------
 var canvas = document.getElementById('myCanvas');
 var ctx = canvas.getContext('2d');
+
+canvas.backgroundColor = 'black';

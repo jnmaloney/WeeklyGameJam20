@@ -4,21 +4,11 @@ var introTimer = 0;
 
 // Show title screen
 function showTitleScreen() {
-    waitEnter = beginIntroSeq;
+    //waitEnter = beginIntroSeq;
+    waitEnter = beginTitle2;
     scene.draw = drawTitle;
 }
 
-// Show intro movie
-function showIntroMovie() {
-    //sceneDraw = draw;
-    //sceneUpdate = introUpdate;
-}
-
-// Show splash screen
-function showSplashScreen() {
-    //sceneDraw = drawSplash;
-    //sceneUpdate = introUpdate;
-}
 
 // Game start
 function gameStart() {
@@ -37,11 +27,15 @@ title2.src = 'img/History.png';
 function beginGame() {
     scene.draw = gameDraw;
     introTimer = 4 * 60;
+    waitTimer = blah;
+}
+
+function blah() {
 }
 
 function beginTitle2() {
     scene.draw = drawTitle2;
-    waitEnter = beginGame;
+    waitEnter = beginIntroSeq;//beginGame;
 }
 
 var waitTimer;
@@ -50,14 +44,6 @@ function beginIntroSeq() {
     entityBatch.push(watcher);
 }
 
-function middleIntroSeq() {
-    // delay
-    introTimer = 200;
-    
-    waitTimer = beginTitle2;
-    
-
-}
 
 
 // Call the first function
@@ -74,11 +60,23 @@ function drawTitle() {
 }
 
 
+function drawTitle2() {
+    showScreen(title2);
+}
+
+
 function showScreen(tile) {
     //
+
+  
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-        
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    //canvas.backgroundColor = 'black';
+    //ctx.fillStyle = 'black';
+    //ctx.fill();   
+      
     ctx.scale(1, 1);
     
     
@@ -86,16 +84,16 @@ function showScreen(tile) {
     var width = tile.width;
     var height = tile.height;
     
-    var x = 0.5 * (canvas.width - width);
-    var y = 0.5 * (canvas.height - height);
 
-    ctx.drawImage(tile, x, y);
+    var h = (canvas.height > height) ? height : canvas.height;
+    var w = h * width / height;
+
+    var x = 0.5 * (canvas.width - w);
+    var y = 0.5 * (canvas.height - h);
+
+    ctx.drawImage(tile, x, y, w, h);
 }
 
-
-function drawTitle2() {
-    showScreen(title2);
-}
 
 
 
